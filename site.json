@@ -1,0 +1,26 @@
+{
+  "title": "Grant Builds With AI",
+  "tagline": "A middle aged guy building real things with AI, one project at a time.",
+  "rss": "https://anchor.fm/s/117c6e234/podcast/rss",
+  "email": "grantbuildswithai@gmail.com",
+  "about": [
+    "A few weeks ago I started building things with AI, and it turned into my new hobby. I'm not a professional developer. I'm a regular guy who picks a real project, figures out how to build it with AI tools, and then tells you how it went.",
+    "Every episode is one project in 10 to 15 minutes: what I tried to build, what went wrong, and how it turned out. You'll hear which tools I used, what they were good at, and which parts I still had to do by hand.",
+    "Some episodes come with a how-to guide. It's a roadmap for building the same thing yourself with an AI helping you."
+  ],
+  "listen": [
+    { "name": "Spotify", "url": "https://podcasters.spotify.com/pod/show/grantbuildswithai3" },
+    { "name": "Apple Podcasts", "url": "" },
+    { "name": "YouTube", "url": "" },
+    { "name": "Pocket Casts", "url": "" },
+    { "name": "RSS feed", "url": "https://anchor.fm/s/117c6e234/podcast/rss" }
+  ],
+  "guides": [
+    {
+      "title": "How to Build an AI Dungeon Master for Discord",
+      "summary": "The roadmap behind episodes 1 and 2: the accounts and setup you'll do yourself, and the parts you can hand off to an AI.",
+      "url": "",
+      "episodes": [1, 2]
+    }
+  ]
+}
