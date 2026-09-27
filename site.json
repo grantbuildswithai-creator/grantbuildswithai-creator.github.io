@@ -9,18 +9,36 @@
     "Some episodes come with a how-to guide. It's a roadmap for building the same thing yourself with an AI helping you."
   ],
   "listen": [
-    { "name": "Spotify", "url": "https://podcasters.spotify.com/pod/show/grantbuildswithai3" },
-    { "name": "Apple Podcasts", "url": "" },
-    { "name": "YouTube", "url": "" },
-    { "name": "Pocket Casts", "url": "" },
-    { "name": "RSS feed", "url": "https://anchor.fm/s/117c6e234/podcast/rss" }
+    {
+      "name": "Spotify",
+      "url": "https://podcasters.spotify.com/pod/show/grantbuildswithai3"
+    },
+    {
+      "name": "Apple Podcasts",
+      "url": ""
+    },
+    {
+      "name": "YouTube",
+      "url": ""
+    },
+    {
+      "name": "Pocket Casts",
+      "url": ""
+    },
+    {
+      "name": "RSS feed",
+      "url": "https://anchor.fm/s/117c6e234/podcast/rss"
+    }
   ],
   "guides": [
     {
-      "title": "How to Build an AI Dungeon Master for Discord",
-      "summary": "The roadmap behind episodes 1 and 2: the accounts and setup you'll do yourself, and the parts you can hand off to an AI.",
-      "url": "",
-      "episodes": [1, 2]
+      "slug": "ai-dungeon-master",
+      "title": "Build Your Own AI Dungeon Master for Discord",
+      "summary": "A beginner's roadmap, and the companion to Episodes 1 and 2. It covers the accounts and setup you'll do yourself, then the ten steps to a bot that runs a D&D campaign in Discord around the clock. No code: your AI tutor writes it with you.",
+      "episodes": [
+        1,
+        2
+      ]
     }
   ]
 }

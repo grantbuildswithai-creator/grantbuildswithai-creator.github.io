@@ -20,12 +20,14 @@ from datetime import datetime
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
+import markdown
 from PIL import Image
 
 HERE = Path(__file__).parent
 OUT = HERE / "_site"
 FEED_CACHE = HERE / "feed.xml"
 COVER_CACHE = HERE / "cover.jpg"
+GUIDES = HERE / "guides"
 ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
 
 esc = html.escape
@@ -180,9 +182,16 @@ def episode_card(ep, root):
 </li>"""
 
 
-def guide_card(g):
-    if g["url"]:
-        action = f'<a class="button" href="{esc(g["url"])}" rel="noopener">Read the guide</a>'
+def guide_href(g, root):
+    if (GUIDES / f"{g['slug']}.md").exists():
+        return f"{root}guides/{g['slug']}/"
+    return g.get("url", "")
+
+
+def guide_card(g, root):
+    href = guide_href(g, root)
+    if href:
+        action = f'<a class="button" href="{esc(href)}">Read the guide</a>'
     else:
         action = '<span class="soon">Coming soon</span>'
     return f"""<li class="guide-card">
@@ -242,7 +251,7 @@ def render_episode(site, ep, guides):
     if guides:
         guide_html = f"""<aside class="ep-guides">
   <h2>Build it yourself</h2>
-  <ul class="guide-list">{"".join(guide_card(g) for g in guides)}</ul>
+  <ul class="guide-list">{"".join(guide_card(g, root) for g in guides)}</ul>
 </aside>"""
     body = f"""<article class="wrap page episode">
   <p><a href="{root}episodes/">← All episodes</a></p>
@@ -260,9 +269,59 @@ def render_guides(site):
     body = f"""<section class="wrap page">
   <h1>Guides</h1>
   <p class="lede">Want to build it yourself? Each guide is a roadmap, not a pile of code. It covers the accounts and setup you'll do by hand, and the parts you can hand to an AI helper.</p>
-  <ul class="guide-list">{"".join(guide_card(g) for g in site['guides'])}</ul>
+  <ul class="guide-list">{"".join(guide_card(g, "../") for g in site['guides'])}</ul>
 </section>"""
     return page(site, "../", "Guides", body, active="guides")
+
+
+CHECKLIST_JS = """<script>
+(() => {
+  const boxes = [...document.querySelectorAll('.guide-body input[type=checkbox]')];
+  const key = 'guide-checks:' + location.pathname;
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(key)) || []; } catch (e) {}
+  boxes.forEach((box, i) => {
+    box.checked = saved.includes(i);
+    box.addEventListener('change', () => {
+      const checked = boxes.flatMap((b, j) => b.checked ? [j] : []);
+      try { localStorage.setItem(key, JSON.stringify(checked)); } catch (e) {}
+    });
+  });
+})();
+</script>"""
+
+
+def render_guide(site, g, episodes):
+    root = "../../"
+    md = markdown.Markdown(extensions=["toc", "sane_lists"])
+    content = md.convert((GUIDES / f"{g['slug']}.md").read_text(encoding="utf-8"))
+    content = re.sub(r"<li>\[ \] (.*?)</li>",
+                     r'<li class="task"><label><input type="checkbox"><span>\1</span></label></li>', content)
+    toc = "".join(f'<li><a href="#{t["id"]}">{esc(t["name"])}</a></li>' for t in md.toc_tokens)
+
+    related = [e for e in episodes if e["number"] in g.get("episodes", [])]
+    related.sort(key=lambda e: e["number"])
+    if related:
+        story = f'<ul class="ep-list">{"".join(episode_card(e, root) for e in related)}</ul>'
+    else:
+        nums = " and ".join(str(n) for n in g.get("episodes", []))
+        story = f"<p>This project is the story of Episodes {nums}, coming soon. Follow the show so you don't miss them.</p>"
+
+    body = f"""<article class="wrap page guide">
+  <p><a href="{root}guides/">← All guides</a></p>
+  <p class="eyebrow">Guide</p>
+  <h1>{esc(g['title'])}</h1>
+  <p class="lede">{esc(g['summary'])}</p>
+  <nav class="toc" aria-label="On this page"><h2>On this page</h2><ol>{toc}</ol></nav>
+  <div class="guide-body">{content}</div>
+  <section class="hear">
+    <h2>Hear the story</h2>
+    {story}
+    <div class="pills">{listen_links(site)}</div>
+  </section>
+</article>
+{CHECKLIST_JS}"""
+    return page(site, root, g["title"], body, description=g["summary"], active="guides")
 
 
 def render_about(site):
@@ -298,9 +357,9 @@ def main():
     site = json.loads((HERE / "site.json").read_text(encoding="utf-8"))
     cover_url, episodes = parse_feed(fetch(site["rss"], FEED_CACHE, offline))
 
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    shutil.copytree(HERE / "static", OUT / "static")
+    # ignore_errors: OneDrive sometimes locks empty folders on Windows.
+    shutil.rmtree(OUT, ignore_errors=True)
+    shutil.copytree(HERE / "static", OUT / "static", dirs_exist_ok=True)
     write_covers(fetch(cover_url, COVER_CACHE, offline))
 
     write(OUT / "index.html", render_home(site, episodes))
@@ -309,6 +368,9 @@ def main():
         guides = [g for g in site["guides"] if ep["number"] in g.get("episodes", [])]
         write(OUT / "episodes" / ep["slug"] / "index.html", render_episode(site, ep, guides))
     write(OUT / "guides" / "index.html", render_guides(site))
+    for g in site["guides"]:
+        if (GUIDES / f"{g['slug']}.md").exists():
+            write(OUT / "guides" / g["slug"] / "index.html", render_guide(site, g, episodes))
     write(OUT / "about" / "index.html", render_about(site))
     write(OUT / ".nojekyll", "")
 
