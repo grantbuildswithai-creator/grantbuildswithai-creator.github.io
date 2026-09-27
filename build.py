@@ -14,6 +14,7 @@ import json
 import re
 import shutil
 import sys
+import time
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -35,10 +36,13 @@ esc = html.escape
 
 # ---------- data ----------
 
-def fetch(url, cache, offline):
+def fetch(url, cache, offline, bust=False):
     if not offline:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "gbwai-site-builder"})
+            if bust:  # the feed's CDN can serve a stale copy; ask for a fresh one
+                url += ("&" if "?" in url else "?") + f"nocache={int(time.time())}"
+            req = urllib.request.Request(url, headers={"User-Agent": "gbwai-site-builder",
+                                                       "Cache-Control": "no-cache"})
             with urllib.request.urlopen(req, timeout=30) as r:
                 data = r.read()
             cache.write_bytes(data)
@@ -355,7 +359,7 @@ def write_covers(cover_bytes):
 def main():
     offline = "--offline" in sys.argv
     site = json.loads((HERE / "site.json").read_text(encoding="utf-8"))
-    cover_url, episodes = parse_feed(fetch(site["rss"], FEED_CACHE, offline))
+    cover_url, episodes = parse_feed(fetch(site["rss"], FEED_CACHE, offline, bust=True))
 
     # ignore_errors: OneDrive sometimes locks empty folders on Windows.
     shutil.rmtree(OUT, ignore_errors=True)
