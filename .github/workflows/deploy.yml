@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: "0 */6 * * *"   # every 6 hours: pick up new episodes from the feed
   workflow_dispatch:
+    inputs:
+      keepalive_days:
+        description: "Make a keep-alive commit if the last commit is at least this many days old"
+        default: "45"
 
 permissions:
   contents: read
@@ -39,3 +43,26 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # GitHub pauses scheduled workflows after 60 days without repo activity,
+  # which would stop new episodes from appearing. A tiny bot commit resets that.
+  keepalive:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          DAYS: ${{ inputs.keepalive_days || '45' }}
+        run: |
+          age=$(( ($(date +%s) - $(git log -1 --format=%ct)) / 86400 ))
+          echo "Last commit was $age day(s) ago (threshold $DAYS)"
+          if [ "$age" -ge "$DAYS" ]; then
+            date -u +%F > .github/keepalive
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/keepalive
+            git commit -m "Keep scheduled site updates active"
+            git push
+          fi
