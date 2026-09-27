@@ -36,15 +36,35 @@ esc = html.escape
 
 # ---------- data ----------
 
+def _get(url, headers):
+    req = urllib.request.Request(url, headers={"User-Agent": "gbwai-site-builder", **headers})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
+
+
+def _build_date(data):
+    m = re.search(rb"<lastBuildDate>(.*?)</lastBuildDate>", data)
+    try:
+        return parsedate_to_datetime(m.group(1).decode()) if m else None
+    except (TypeError, ValueError):
+        return None
+
+
 def fetch(url, cache, offline, bust=False):
     if not offline:
         try:
-            if bust:  # the feed's CDN can serve a stale copy; ask for a fresh one
-                url += ("&" if "?" in url else "?") + f"nocache={int(time.time())}"
-            req = urllib.request.Request(url, headers={"User-Agent": "gbwai-site-builder",
-                                                       "Cache-Control": "no-cache"})
-            with urllib.request.urlopen(req, timeout=30) as r:
-                data = r.read()
+            if not bust:
+                data = _get(url, {})
+            else:
+                # The feed's CDN edges don't all update at once, and some serve an old
+                # copy for a while after publishing. Ask several times, keep the newest.
+                copies = []
+                for i in range(5):
+                    fresh = url + ("&" if "?" in url else "?") + f"nocache={int(time.time())}{i}"
+                    copies.append(_get(fresh, {"Cache-Control": "no-cache"}))
+                    time.sleep(2)
+                data = max(copies, key=lambda d: _build_date(d).timestamp() if _build_date(d) else 0)
+                print(f"Feed copies' build dates: {[str(_build_date(d)) for d in copies]}")
             cache.write_bytes(data)
             return data
         except Exception as e:
