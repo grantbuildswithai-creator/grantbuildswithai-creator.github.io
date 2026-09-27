@@ -108,7 +108,7 @@ This is the single most important design idea in the project. Conversation memor
 
 - Write your lore as simple text files, one per place or character, plus an index listing what exists
 - Give the DM a way to record facts it invents, so the story stays consistent
-- Real-world ties make it feel alive. My campaign, "A Patient River," is set in Montana's Bitterroot Valley around 1905, with real places like Hamilton's Coffee Cup diner.
+- Real-world ties make it feel alive. My campaign, "A Patient River," is set in a real valley in the early 1900s, with real towns and landmarks worked into the story.
 - Fun option: have an AI write the lore and don't read it yourself, so you can play without spoilers. That's what I did.
 
 ### 10. Back it up, then level up with Claude Code
