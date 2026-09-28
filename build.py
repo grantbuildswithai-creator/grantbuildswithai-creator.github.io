@@ -329,7 +329,8 @@ def render_guide(site, g, episodes):
         story = f'<ul class="ep-list">{"".join(episode_card(e, root) for e in related)}</ul>'
     else:
         nums = " and ".join(str(n) for n in g.get("episodes", []))
-        story = f"<p>This project is the story of Episodes {nums}, coming soon. Follow the show so you don't miss them.</p>"
+        word, them = ("Episodes", "them") if len(g.get("episodes", [])) > 1 else ("Episode", "it")
+        story = f"<p>This project is the story of {word} {nums}, coming soon. Follow the show so you don't miss {them}.</p>"
 
     body = f"""<article class="wrap page guide">
   <p><a href="{root}guides/">← All guides</a></p>
