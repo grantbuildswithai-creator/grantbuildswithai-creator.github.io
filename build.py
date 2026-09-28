@@ -29,6 +29,7 @@ OUT = HERE / "_site"
 FEED_CACHE = HERE / "feed.xml"
 COVER_CACHE = HERE / "cover.jpg"
 GUIDES = HERE / "guides"
+TRANSCRIPTS = HERE / "transcripts"
 ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
 
 esc = html.escape
@@ -269,6 +270,17 @@ def render_episode_index(site, episodes):
     return page(site, "../", "Episodes", body, active="episodes")
 
 
+def transcript_html(ep):
+    # Transcripts are matched by the episode's slug: transcripts/<slug>.md
+    path = TRANSCRIPTS / f"{ep['slug']}.md"
+    if not path.exists():
+        return ""
+    return f"""<details class="transcript">
+  <summary>Read the transcript</summary>
+  <div class="transcript-body">{markdown.markdown(path.read_text(encoding="utf-8"))}</div>
+</details>"""
+
+
 def render_episode(site, ep, guides):
     root = "../../"
     guide_html = ""
@@ -284,6 +296,7 @@ def render_episode(site, ep, guides):
   <audio controls preload="none" src="{esc(ep['audio'])}"></audio>
   <div class="notes">{clean_notes(ep['notes'])}</div>
   {guide_html}
+  {transcript_html(ep)}
   <div class="pills">{listen_links(site)}</div>
 </article>"""
     return page(site, root, ep["title"], body, description=summary(ep["notes"]), active="episodes")

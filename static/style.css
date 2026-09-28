@@ -208,3 +208,26 @@ audio { width: 100%; margin: 12px 0 4px; }
   .latest-card { padding: 22px 18px; }
   .toc ol { columns: 1; }
 }
+
+/* episode transcripts */
+.transcript {
+  margin: 2em 0;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.transcript summary {
+  padding: 16px 24px;
+  cursor: pointer;
+  color: var(--neon);
+  font-weight: 500;
+  list-style: none;
+}
+.transcript summary::-webkit-details-marker { display: none; }
+.transcript summary::before { content: "▸"; display: inline-block; width: 1.2em; transition: transform .15s; }
+.transcript[open] summary::before { transform: rotate(90deg); }
+.transcript summary:hover { text-shadow: var(--glow); }
+.transcript summary:focus-visible { outline: 2px solid var(--neon); outline-offset: -2px; border-radius: var(--radius); }
+.transcript-body { padding: 0 24px 12px; border-top: 1px solid var(--line); }
+.transcript-body > p:first-child { color: var(--muted); font-size: .9rem; }
+.transcript-body h3 { margin-top: 1.4em; color: var(--neon); font-weight: 500; }
