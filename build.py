@@ -323,7 +323,7 @@ def render_guide(site, g, episodes):
                      r'<li class="task"><label><input type="checkbox"><span>\1</span></label></li>', content)
     toc = "".join(f'<li><a href="#{t["id"]}">{esc(t["name"])}</a></li>' for t in md.toc_tokens)
 
-    related = [e for e in episodes if e["number"] in g.get("episodes", [])]
+    related = [e for e in episodes if e["type"] != "bonus" and e["number"] in g.get("episodes", [])]
     related.sort(key=lambda e: e["number"])
     if related:
         story = f'<ul class="ep-list">{"".join(episode_card(e, root) for e in related)}</ul>'
@@ -390,7 +390,7 @@ def main():
     write(OUT / "index.html", render_home(site, episodes))
     write(OUT / "episodes" / "index.html", render_episode_index(site, episodes))
     for ep in episodes:
-        guides = [g for g in site["guides"] if ep["number"] in g.get("episodes", [])]
+        guides = [g for g in site["guides"] if ep["type"] != "bonus" and ep["number"] in g.get("episodes", [])]
         write(OUT / "episodes" / ep["slug"] / "index.html", render_episode(site, ep, guides))
     write(OUT / "guides" / "index.html", render_guides(site))
     for g in site["guides"]:

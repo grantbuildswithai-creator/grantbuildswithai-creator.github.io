@@ -43,9 +43,9 @@
     {
       "slug": "google-research-agent",
       "title": "Deploy Your Own AI Research Agent on Google Cloud",
-      "summary": "The companion to Episode 5. Copy Google's Deep Search agent into your own Google Cloud account, avoid the setting that bills you around the clock, and build a small tool that saves its cited reports as Word documents. Includes a real report to read. No code: your AI helper writes it with you.",
+      "summary": "The companion to Episode 4. Copy Google's Deep Search agent into your own Google Cloud account, avoid the setting that bills you around the clock, and build a small tool that saves its cited reports as Word documents. Includes a real report to read. No code: your AI helper writes it with you.",
       "episodes": [
-        5
+        4
       ]
     }
   ]
