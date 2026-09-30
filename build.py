@@ -415,6 +415,9 @@ def main():
     # ignore_errors: OneDrive sometimes locks empty folders on Windows.
     shutil.rmtree(OUT, ignore_errors=True)
     shutil.copytree(HERE / "static", OUT / "static", dirs_exist_ok=True)
+    # The GBc̄Ai app's web version, exported from the app project (npm run publish:web).
+    if (HERE / "app").exists():
+        shutil.copytree(HERE / "app", OUT / "app", dirs_exist_ok=True)
     write_covers(fetch(cover_url, COVER_CACHE, offline))
 
     write(OUT / "index.html", render_home(site, episodes))
