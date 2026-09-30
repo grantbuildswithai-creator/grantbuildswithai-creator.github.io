@@ -247,7 +247,7 @@ def render_home(site, episodes):
 </section>"""
     body = f"""<section class="hero">
   <div class="wrap hero-inner">
-    <img class="hero-cover" src="static/cover-600.jpg" width="600" height="600" alt="Grant Builds With AI cover art: GB c-bar AI in neon">
+    <img class="hero-cover" src="static/cover-600.jpg" width="600" height="600" alt="Grant Builds With AI cover art: GB c-bar Ai in neon">
     <div>
       <p class="eyebrow">A podcast</p>
       <h1>{esc(site['title'])}</h1>
