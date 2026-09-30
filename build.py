@@ -298,9 +298,12 @@ def render_episode(site, ep, guides, reports):
   <ul class="guide-list">{"".join(guide_card(g, root) for g in guides)}</ul>
 </aside>"""
     if reports:
+        # A report can override the section heading and note; otherwise the site-wide ones apply.
+        heading = reports[0].get("heading", "Read the reports")
+        note = reports[0].get("note", site.get("reports_note", ""))
         guide_html += f"""<aside class="ep-guides">
-  <h2>Read the reports</h2>
-  <p>{esc(site.get('reports_note', ''))}</p>
+  <h2>{esc(heading)}</h2>
+  <p>{esc(note)}</p>
   <ul class="guide-list">{"".join(report_card(r, root) for r in reports)}</ul>
 </aside>"""
     body = f"""<article class="wrap page episode">
