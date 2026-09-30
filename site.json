@@ -49,5 +49,24 @@
         4
       ]
     }
+  ],
+  "reports_note": "Two real reports from the agent, exactly as it produced them. Gemini did the research and Claude checked it, and each report lists the errors Claude found. They were tests of the tool, based on public filings as of 30 September 2026. They're educational, not investment advice.",
+  "reports": [
+    {
+      "title": "Costco (COST): Long-Term Investment Research",
+      "summary": "The first report from the two-AI team. A steady business with a steep price. Claude caught a stale dividend and some optimistic return math in Gemini's scenario.",
+      "file": "costco-investment-research.docx",
+      "episodes": [
+        6
+      ]
+    },
+    {
+      "title": "Hims & Hers Health (HIMS): Long-Term Investment Research",
+      "summary": "The stress test. Gemini's summary missed a federal lawsuit and reported about $1 billion of debt as zero. Claude found both in the filings.",
+      "file": "hims-hers-investment-research.docx",
+      "episodes": [
+        6
+      ]
+    }
   ]
 }

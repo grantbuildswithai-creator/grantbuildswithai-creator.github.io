@@ -281,13 +281,27 @@ def transcript_html(ep):
 </details>"""
 
 
-def render_episode(site, ep, guides):
+def report_card(r, root):
+    return f"""<li class="guide-card">
+  <h3>{esc(r['title'])}</h3>
+  <p>{esc(r['summary'])}</p>
+  <a class="button" href="{root}static/reports/{esc(r['file'])}">Download (Word)</a>
+</li>"""
+
+
+def render_episode(site, ep, guides, reports):
     root = "../../"
     guide_html = ""
     if guides:
         guide_html = f"""<aside class="ep-guides">
   <h2>Build it yourself</h2>
   <ul class="guide-list">{"".join(guide_card(g, root) for g in guides)}</ul>
+</aside>"""
+    if reports:
+        guide_html += f"""<aside class="ep-guides">
+  <h2>Read the reports</h2>
+  <p>{esc(site.get('reports_note', ''))}</p>
+  <ul class="guide-list">{"".join(report_card(r, root) for r in reports)}</ul>
 </aside>"""
     body = f"""<article class="wrap page episode">
   <p><a href="{root}episodes/">← All episodes</a></p>
@@ -404,7 +418,8 @@ def main():
     write(OUT / "episodes" / "index.html", render_episode_index(site, episodes))
     for ep in episodes:
         guides = [g for g in site["guides"] if ep["type"] != "bonus" and ep["number"] in g.get("episodes", [])]
-        write(OUT / "episodes" / ep["slug"] / "index.html", render_episode(site, ep, guides))
+        reports = [r for r in site.get("reports", []) if ep["type"] != "bonus" and ep["number"] in r.get("episodes", [])]
+        write(OUT / "episodes" / ep["slug"] / "index.html", render_episode(site, ep, guides, reports))
     write(OUT / "guides" / "index.html", render_guides(site))
     for g in site["guides"]:
         if (GUIDES / f"{g['slug']}.md").exists():
