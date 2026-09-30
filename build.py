@@ -131,7 +131,7 @@ def summary(notes_html, limit=180):
 
 # ---------- templates ----------
 
-WORDMARK = '<span class="neon">GB<span class="cbar">c</span>AI</span>'
+WORDMARK = '<span class="neon">GB<span class="cbar">c</span>Ai</span>'
 
 
 def page(site, root, title, body, description=None, active=""):
@@ -142,6 +142,7 @@ def page(site, root, title, body, description=None, active=""):
         for key, href, label in [
             ("episodes", "episodes/", "Episodes"),
             ("guides", "guides/", "Guides"),
+            ("app", "app/", "App"),
             ("about", "about/", "About"),
         ]
     )
