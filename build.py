@@ -140,9 +140,9 @@ def page(site, root, title, body, description=None, active=""):
     nav = "".join(
         f'<a href="{root}{href}"{" aria-current=\"page\"" if key == active else ""}>{label}</a>'
         for key, href, label in [
+            ("podcast", "podcast/", "Podcast"),
             ("episodes", "episodes/", "Episodes"),
             ("guides", "guides/", "Guides"),
-            ("app", "app/", "App"),
             ("about", "about/", "About"),
         ]
     )
@@ -235,7 +235,7 @@ def render_home(site, episodes):
   <h2 class="section-title">Latest</h2>
   <article class="latest-card">
     {ep_meta(latest)}
-    <h3><a href="episodes/{latest['slug']}/">{esc(latest['title'])}</a></h3>
+    <h3><a href="../episodes/{latest['slug']}/">{esc(latest['title'])}</a></h3>
     <p>{esc(summary(latest['notes'], 320))}</p>
     <audio controls preload="none" src="{esc(latest['audio'])}"></audio>
   </article>
@@ -243,12 +243,12 @@ def render_home(site, episodes):
     if len(episodes) > 1:
         more_html = f"""<section class="wrap">
   <h2 class="section-title">More episodes</h2>
-  <ul class="ep-list">{"".join(episode_card(e, "") for e in episodes[1:6])}</ul>
-  <p><a href="episodes/">All episodes →</a></p>
+  <ul class="ep-list">{"".join(episode_card(e, "../") for e in episodes[1:6])}</ul>
+  <p><a href="../episodes/">All episodes →</a></p>
 </section>"""
     body = f"""<section class="hero">
   <div class="wrap hero-inner">
-    <img class="hero-cover" src="static/cover-600.jpg" width="600" height="600" alt="Grant Builds With AI cover art: GB c-bar Ai in neon">
+    <img class="hero-cover" src="../static/cover-600.jpg" width="600" height="600" alt="Grant Builds With AI cover art: GB c-bar Ai in neon">
     <div>
       <p class="eyebrow">A podcast</p>
       <h1>{esc(site['title'])}</h1>
@@ -260,7 +260,7 @@ def render_home(site, episodes):
 </section>
 {latest_html}
 {more_html}"""
-    return page(site, "", site["title"], body)
+    return page(site, "../", site["title"], body, active="podcast")
 
 
 def render_episode_index(site, episodes):
@@ -408,6 +408,24 @@ def write_covers(cover_bytes):
             im.resize((size, size), Image.LANCZOS).save(OUT / "static" / f"cover-{size}.jpg", quality=85)
 
 
+def write_app_redirects():
+    """The hub used to live under /app/. Write a tiny redirect page for each old address."""
+    for html in (HERE / "app").rglob("*.html"):
+        rel = html.relative_to(HERE / "app").as_posix()
+        if rel.startswith("+"):
+            continue
+        target = "/" + rel.removesuffix(".html").removesuffix("index").rstrip("/")
+        target = target or "/"
+        write(OUT / "app" / rel, f"""<!doctype html>
+<meta charset="utf-8">
+<title>Moved</title>
+<link rel="canonical" href="{target}">
+<meta http-equiv="refresh" content="0; url={target}">
+<script>location.replace("{target}" + location.search + location.hash)</script>
+<p>This page moved to <a href="{target}">{target}</a>.</p>
+""")
+
+
 def main():
     offline = "--offline" in sys.argv
     site = json.loads((HERE / "site.json").read_text(encoding="utf-8"))
@@ -416,12 +434,15 @@ def main():
     # ignore_errors: OneDrive sometimes locks empty folders on Windows.
     shutil.rmtree(OUT, ignore_errors=True)
     shutil.copytree(HERE / "static", OUT / "static", dirs_exist_ok=True)
-    # The GBc̄Ai app's web version, exported from the app project (npm run publish:web).
+    # The GBc̄Ai hub (the app's web version, from `npm run publish:web` in the app project)
+    # is the front door at the site root. The podcast pages sit alongside it.
     if (HERE / "app").exists():
-        shutil.copytree(HERE / "app", OUT / "app", dirs_exist_ok=True)
+        shutil.copytree(HERE / "app", OUT, dirs_exist_ok=True)
+        shutil.copyfile(HERE / "app" / "+not-found.html", OUT / "404.html")
+        write_app_redirects()
     write_covers(fetch(cover_url, COVER_CACHE, offline))
 
-    write(OUT / "index.html", render_home(site, episodes))
+    write(OUT / "podcast" / "index.html", render_home(site, episodes))
     write(OUT / "episodes" / "index.html", render_episode_index(site, episodes))
     for ep in episodes:
         guides = [g for g in site["guides"] if ep["type"] != "bonus" and ep["number"] in g.get("episodes", [])]
