@@ -35,8 +35,10 @@
     {
       "slug": "build-your-own-app",
       "title": "Build Your Own App with AI",
-      "summary": "How I built GBc̄Ai, an Android app and website, without being a developer. The accounts you'll set up yourself, a workshop design that grows with you, a real AI build with a spending cap, and the path through Google Play testing. No code: your AI helper writes it with you, and a Word version to download.",
-      "episodes": []
+      "summary": "The companion to Episode 9. How I built GBc̄Ai, an Android app and website, without being a developer. The accounts you'll set up yourself, a workshop design that grows with you, a real AI build with a spending cap, and the path through Google Play testing. No code: your AI helper writes it with you, and a Word version to download.",
+      "episodes": [
+        9
+      ]
     },
     {
       "slug": "ai-dungeon-master",
