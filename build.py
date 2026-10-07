@@ -358,6 +358,8 @@ def render_guide(site, g, episodes):
     related.sort(key=lambda e: e["number"])
     if related:
         story = f'<ul class="ep-list">{"".join(episode_card(e, root) for e in related)}</ul>'
+    elif not g.get("episodes"):
+        story = "<p>The episode about this project is coming soon. Follow the show so you don't miss it.</p>"
     else:
         nums = " and ".join(str(n) for n in g.get("episodes", []))
         word, them = ("Episodes", "them") if len(g.get("episodes", [])) > 1 else ("Episode", "it")
