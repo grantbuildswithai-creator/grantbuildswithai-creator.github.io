@@ -1,4 +1,4 @@
-I started this project to show my kids that if Dad can build a real app, they can too. I'm not a developer, and when I started I didn't even know what the app would do. About a week later it was on the Google Play Store for testing, my kids have it on their phones, and the same app runs as the website you're reading. Claude wrote the code. I made the decisions. This is the path I took, in order, so you can build your own.
+I started this project to show my kids that if Dad can build a real app, they can too. I'm not a developer, and when I started I didn't even know what the app would do. About a week later it was on the Google Play Store for testing, my kids can install it on their phones, and the same app runs as the website you're reading. Claude wrote the code. I made the decisions. This is the path I took, in order, so you can build your own.
 
 Download the Word version to keep or print: [Build Your Own App with AI (Word document)](../../static/reports/build-your-own-app-guide.docx)
 
