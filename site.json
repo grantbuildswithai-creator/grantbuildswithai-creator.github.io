@@ -48,6 +48,14 @@
       "episodes": [
         4
       ]
+    },
+    {
+      "slug": "family-handbook-book",
+      "title": "Make a Printed Book for Your Family with AI",
+      "summary": "The companion to Episode 5. Turn the rough notes in a Google Doc into a real printed book, with AI as your editor, co-writer and typesetter. Covers the editor's questions to ask, shaping chapters into a book, print-ready files, ordering, and a new edition every year. No code, and a Word version to download.",
+      "episodes": [
+        5
+      ]
     }
   ],
   "reports_note": "Two real reports from the agent, exactly as it produced them. Gemini did the research and Claude checked it, and each report lists the errors Claude found. They were tests of the tool, based on public filings as of 30 September 2026. They're educational, not investment advice.",
