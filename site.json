@@ -56,6 +56,14 @@
       "episodes": [
         5
       ]
+    },
+    {
+      "slug": "financial-advisor-agent",
+      "title": "Build Your Own AI Investment Research Team",
+      "summary": "The companion to Episode 6. Take Google's sample Financial Advisor agent apart, give it official SEC filings, and re-staff it as a team of two AIs: Gemini does the research, and Claude does the analysis and fact-checks Gemini. Includes two real reports and what each one cost. Educational, not investment advice. No code: your AI helper writes it with you.",
+      "episodes": [
+        6
+      ]
     }
   ],
   "reports_note": "Two real reports from the agent, exactly as it produced them. Gemini did the research and Claude checked it, and each report lists the errors Claude found. They were tests of the tool, based on public filings as of 30 September 2026. They're educational, not investment advice.",
