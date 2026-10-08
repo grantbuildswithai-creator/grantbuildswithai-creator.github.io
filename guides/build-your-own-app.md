@@ -155,7 +155,8 @@ Create a **closed test** (not "internal testing", which doesn't count toward Goo
 - **Google Play:** $25, one time
 - **Domain:** about $10 a year (optional)
 - **Expo, GitHub, Cloudflare:** free plans were plenty
-- **AI in the app:** with Claude Haiku, the cheapest model, about **5 to 10 cents per full 20-turn adventure**. With a daily cap, the worst case is a few dollars a day, and real use is pennies.
+- **AI in the app:** I started on Claude Haiku 4.5 at about 5 to 10 cents per full 20-turn adventure. When **Claude Haiku 5.5** came out, ten times cheaper per token, I switched by changing one line on my server. Now a full adventure costs **roughly a cent**. With my daily cap, the worst case is well under a dollar a day.
+- **Tip:** new, cheaper models come out often. Because the AI lives on your server, not in the app, switching takes minutes and your users don't need an update. With Haiku 5.5, ask for **low effort**, so it thinks briefly and stays fast.
 - **My time:** about a week of evenings, most of it testing and deciding, plus a few days waiting on Google
 
 ## What I learned
