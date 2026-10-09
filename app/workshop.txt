@@ -3,7 +3,7 @@
 
 // ─── To add an in-app build: make a folder like ./ai-or-not, then add it here. ───
 // ─── To add a link (podcast, guide, agent, website): edit ./links.ts. ───
-export const APP_BUILDS: AppBuild[] = [pocketDM, soundboard, aiOrNot, tipJar];
+export const APP_BUILDS: AppBuild[] = [pocketDM, soundboard, aiOrNot, ask, tipJar];
 export const BUILDS: Build[] = [...APP_BUILDS, ...LINKS];
 
 // collapsible: tap the heading to fold the section up. The value is how it starts out;
@@ -213,6 +213,31 @@ export const aiOrNot: AppBuild = {
     time: 'One evening',
   },
   privacy: 'Nothing. The game runs entirely on your phone.',
+};
+
+
+---
+
+
+export const ask: AppBuild = {
+  kind: 'app',
+  id: 'ask',
+  name: 'Ask GBc̄Ai',
+  tagline: 'Your AI helper for building with AI. Ask anything.',
+  emoji: '💬',
+  section: 'useful',
+  status: 'beta',
+  needsServer: true,
+  Screen,
+  story: {
+    summary:
+      "An AI helper that knows everything on grantbuildswithai.com (every episode, guide and build) and helps you take your first steps as an AI builder.",
+    ai: 'Claude wrote the chat, the server and its instructions, and set up a knowledge pack that rebuilds itself from the website. Claude Haiku answers every message.',
+    me: 'Decided what it should know and how it should talk: a patient tutor, family-friendly, with no financial, medical or legal advice.',
+    time: 'An afternoon',
+  },
+  privacy:
+    "What you type and the recent conversation go to Grant's server and on to Claude to write a reply. Nothing is stored on the server; your chat is saved only on your device. If you tap ⚑ Report, the reported reply is kept so Grant can review it.",
 };
 
 
