@@ -428,6 +428,59 @@ def write_app_redirects():
 """)
 
 
+def plain_text(fragment):
+    """HTML to readable plain text, for the chat's knowledge pack."""
+    text = re.sub(r"<(script|style)\b.*?</\1>", " ", fragment, flags=re.S | re.I)
+    text = re.sub(r"<br\s*/?>|</(p|li|h[1-6]|div)>", "\n", text, flags=re.I)
+    text = html.unescape(re.sub(r"<[^>]+>", " ", text))
+    return "\n".join(" ".join(line.split()) for line in text.splitlines() if line.strip())
+
+
+def write_knowledge(site, episodes):
+    """knowledge.txt: everything on the site in one plain-text file. The Ask GBc̄Ai chat reads it
+    (via the API server), so the chat always knows the current episodes, guides and builds."""
+    base = "https://grantbuildswithai.com"
+    out = [f"# {site['title']}", site["tagline"], "", "## About", *site["about"], ""]
+    out += [f"Contact: {site['email']}", "Listen: " + ", ".join(f"{l['name']} {l['url']}" for l in site["listen"] if l["url"]), ""]
+
+    out.append("## Podcast episodes (newest first)")
+    for ep in episodes:
+        num = f"Episode {ep['number']}" if ep.get("number") and ep["type"] != "bonus" else "Bonus"
+        out += ["", f"### {num}: {ep['title']} ({ep['date']:%B %d, %Y})", f"Page: {base}/episodes/{ep['slug']}/", plain_text(ep["notes"])]
+        transcript = TRANSCRIPTS / f"{ep['slug']}.md"
+        if transcript.exists():
+            out += ["Transcript:", transcript.read_text(encoding="utf-8")]
+
+    out += ["", "## How-to guides"]
+    for g in site["guides"]:
+        path = GUIDES / f"{g['slug']}.md"
+        out += ["", f"### {g['title']}", f"Page: {base}/guides/{g['slug']}/", g["summary"]]
+        if path.exists():
+            # Nest the guide's own headings under it (## -> ####) so the file's outline stays clear.
+            out.append(re.sub(r"^(#{2,3}) ", lambda m: "##" + m.group(1) + " ", path.read_text(encoding="utf-8"), flags=re.M))
+
+    if site.get("reports"):
+        out += ["", "## Example reports (Word downloads)"]
+        out += [f"- {r['title']}: {r['summary']} ({base}/static/reports/{r['file']})" for r in site["reports"]]
+
+    workshop = HERE / "app" / "workshop.txt"
+    if workshop.exists():
+        out += ["", "## The GBc̄Ai workshop (the app and the website's front page)",
+                "Everything in the workshop, as defined in the app's source. Sections, names, taglines, links,",
+                "and 'platforms' (where it appears: web = website only). The workshop is at " + base + "/builds",
+                workshop.read_text(encoding="utf-8")]
+
+    try:
+        req = urllib.request.Request(f"{base}/ai-briefing/", headers={"User-Agent": "gbwai-site-builder"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            briefing = plain_text(r.read().decode("utf-8", "replace"))
+        out += ["", "## Latest AI Briefing (Grant's daily AI news page, " + base + "/ai-briefing/)", briefing]
+    except Exception as e:  # the briefing is a nice-to-have; never fail the build over it
+        print(f"Skipped AI Briefing in knowledge.txt: {e}")
+
+    write(OUT / "knowledge.txt", "\n".join(out) + "\n")
+
+
 def main():
     offline = "--offline" in sys.argv
     site = json.loads((HERE / "site.json").read_text(encoding="utf-8"))
@@ -455,6 +508,7 @@ def main():
         if (GUIDES / f"{g['slug']}.md").exists():
             write(OUT / "guides" / g["slug"] / "index.html", render_guide(site, g, episodes))
     write(OUT / "about" / "index.html", render_about(site))
+    write_knowledge(site, episodes)
     write(OUT / ".nojekyll", "")
 
     print(f"Built {len(episodes)} episode(s) into {OUT}")
